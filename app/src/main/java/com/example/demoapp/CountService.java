@@ -45,14 +45,15 @@ public class CountService extends Service {
     }
 
     private void call(String s) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            for (int i = 0; i < callbackRemoteCallbackList.getRegisteredCallbackCount(); i++) {
-                try {
-                    callbackRemoteCallbackList.getRegisteredCallbackItem(i).call(s);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+        int size = callbackRemoteCallbackList.beginBroadcast();
+        for (int i = 0; i < size; i++) {
+            try {
+                callbackRemoteCallbackList.getBroadcastItem(i).call(s);
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
+        callbackRemoteCallbackList.finishBroadcast();
     }
 }
+
